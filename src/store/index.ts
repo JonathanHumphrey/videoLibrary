@@ -6,15 +6,26 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    User: 
+      {
+        username: '',
+        userId: 0
+      }
+    
   },
   mutations: {
+    addUser: (state, dataBlob) => {
+      
+      state.User.username = dataBlob.username
+      state.User.userId = dataBlob.userID
+    }
   },
   actions: {
-    async validate(token) {
-      console.log(token)
+    async validate({ commit }, token) {
+      
       const res = fetch('https://id.twitch.tv/oauth2/validate', {
         headers: new Headers({
-          'Authorization': 'OAuth f4zrhgn4vlpupdwkba7hf07a1pvfpm'
+          'Authorization': 'OAuth ' + token
         })
       })
         .then(
@@ -24,11 +35,17 @@ export default new Vuex.Store({
       )
       .then(
         data => {
-          console.log(data)
+          //console.log(data)
+          const dataBlob = {
+            username: data.login,
+            userID: data.user_id
+          }
+          commit('addUser', dataBlob)
         }
       );
       
-    }
+    },
+    
   },
   modules: {
   }
