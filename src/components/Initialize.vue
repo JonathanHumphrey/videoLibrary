@@ -9,7 +9,7 @@
     >
     <button @click="validateToken()">Link Now!</button>
     <div>
-      <h1>{{ this.user.username }}</h1>
+      <h1>{{ this.User.username }}</h1>
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@ http://localhost:8080/#access_token=if94bmlel947n7g4efdzkfhzvkxe8p&scope=user%3A
 export default {
   name: "Initialize",
   methods: {
-    ...mapActions(["validate"]),
+    ...mapActions(["validate", "fetchInformation"]),
     validateToken() {
       // Partitions up the url so that the token can be grabbed
       //Initial Split
@@ -34,11 +34,18 @@ export default {
 
       let actualToken = token[1];
       this.validate(actualToken);
+
+      setTimeout(() => {
+        this.fetchInformation(this.User);
+      }, 500);
+
+      console.log(this.Follows);
     },
   },
   computed: {
     ...mapState({
-      user: (state) => state.User,
+      User: (state) => state.User,
+      Follows: (state) => state.Follows,
     }),
   },
 };
