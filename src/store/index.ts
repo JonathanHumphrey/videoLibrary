@@ -32,6 +32,9 @@ export default new Vuex.Store({
       state.Follows.followerArr.unshift(dataBlob.followers)
 
       console.log(state)
+    },
+    subFetch: (state, subArr) => {
+      state.subscribers.unshift(subArr)
     }
   },
   actions: {
@@ -63,9 +66,11 @@ export default new Vuex.Store({
     async fetchInformation({commit}, User) {
       
       console.log(User.token)
-      const url = "https://api.twitch.tv/helix/users/follows?to_id=" + User.userId
-        console.log(url)
-        const res =  fetch(url, {
+      const followUrl = "https://api.twitch.tv/helix/users/follows?to_id=" + User.userId
+      const subUrl = "https://api.twitch.tv/helix/subscriptions?broadcaster_id=" + User.userId
+        
+      //Fetches the users followers 
+        const followRes =  fetch(followUrl, {
           headers: new Headers({
             'Authorization': 'Bearer ' + User.token,
             'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
@@ -76,17 +81,36 @@ export default new Vuex.Store({
             return response.json();
           }
         )
-          .then(
-            data => {
-              const dataBlob = {
-                total: data.total,
-                followers: data.data
-              }
-              console.log(dataBlob.followers)
-              commit('followFetch', dataBlob)
-          }
+        .then(
+          data => {
+            const dataBlob = {
+              total: data.total,
+              followers: data.data
+            }
+            console.log(dataBlob.followers)
+            commit('followFetch', dataBlob)
+        }
       )
       
+      // Fetches the users subsrcibers
+      const subRes = fetch(subUrl, {
+        headers: new Headers({
+          'Authorization': 'Bearer ' + User.token,
+          'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
+        })
+      })
+        .then(
+          function (response) {
+            return response.json()
+          }
+      )
+        .then(
+          data => {
+            console.log(data.data)
+            commit('subFetch', data.data)
+        }
+      )
+
     },
     
   },
