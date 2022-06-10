@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>Total Follows: {{ this.Follows.total }}</p>
-    <div>
+    <div class="stats-tables">
       <table>
         <thead>
           <th>Name</th>
@@ -35,6 +35,17 @@
 import { mapState } from "vuex";
 
 export default {
+  props: {
+    title: {
+      type: String,
+      default: "Tab",
+    },
+  },
+  data() {
+    return {
+      isActive: true,
+    };
+  },
   name: "Stats",
   methods: {},
   computed: {
@@ -48,4 +59,17 @@ export default {
 </script>
 
 <style scoped>
+.stats-tables {
+  border: solid black;
+  display: flex;
+  flex-direction: row;
+}
+table {
+  text-align: left;
+  table-layout: auto;
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0;
+  height: 1rem;
+}
 </style>

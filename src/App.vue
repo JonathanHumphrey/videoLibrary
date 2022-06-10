@@ -1,18 +1,22 @@
 <template>
   <div id="app">
     <Initialize />
-    <Stats />
+    <NavTabs />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+
 import Initialize from "./components/Initialize.vue";
-import Stats from "./components/Stats.vue";
+import NavTabs from "./components/NavTabs.vue";
+import Tab from "./components/Tab.vue";
+//import Stats from "./components/Stats.vue";
 
 export default Vue.extend({
+  methods: {},
   name: "App",
-  components: { Initialize, Stats },
+  components: { Initialize, NavTabs },
 });
 </script>
 

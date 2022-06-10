@@ -18,6 +18,7 @@ export default new Vuex.Store({
       followerArr: []
     },
     subscribers: [],
+    followedStreams: []
     
   },
   mutations: {
@@ -35,6 +36,9 @@ export default new Vuex.Store({
     },
     subFetch: (state, subArr) => {
       state.subscribers.unshift(subArr)
+    },
+    streamFetch: (state, streamArr) => {
+      state.followedStreams.unshift(streamArr)
     }
   },
   actions: {
@@ -63,11 +67,14 @@ export default new Vuex.Store({
       );
       
     },
+
+    // Grabs and commits the various information needed from the API
     async fetchInformation({commit}, User) {
       
-      console.log(User.token)
+      // Establishes a URL for each of the different API requests
       const followUrl = "https://api.twitch.tv/helix/users/follows?to_id=" + User.userId
       const subUrl = "https://api.twitch.tv/helix/subscriptions?broadcaster_id=" + User.userId
+      const streamUrl = "https://api.twitch.tv/helix/streams/followed?user_id=" + User.userId
         
       //Fetches the users followers 
         const followRes =  fetch(followUrl, {
@@ -108,6 +115,25 @@ export default new Vuex.Store({
           data => {
             console.log(data.data)
             commit('subFetch', data.data)
+        }
+      )
+      
+      // Fetches the users followed streams and all their statistics
+      const streamRes = fetch(streamUrl, {
+        headers: new Headers({
+          'Authorization': 'Bearer ' + User.token,
+          'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
+        }) 
+      })
+        .then(
+          function (response) {
+            return response.json()
+        }
+      )
+        .then(
+          data => {
+            
+            commit('streamFetch', data.data)
         }
       )
 

@@ -4,13 +4,10 @@
 
     <a
       id="linkAnchor"
-      href="https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=pk0roinew9e83z6qn6ctr7xo7yas15&redirect_uri=http://localhost:8080&scope=user:read:follows%20channel:read:subscriptions"
+      href="https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=pk0roinew9e83z6qn6ctr7xo7yas15&redirect_uri=http://localhost:8080&scope=user:read:follows%20channel:read:subscriptions%20user:read:follows"
       >Authorize a Link</a
     >
     <button @click="validateToken()">Link Now!</button>
-    <div>
-      <h1>{{ this.User.username }}</h1>
-    </div>
   </div>
 </template>
 
