@@ -31,8 +31,6 @@ export default new Vuex.Store({
     followFetch: (state, dataBlob) => {
       state.Follows.total = dataBlob.total
       state.Follows.followerArr.unshift(dataBlob.followers)
-
-      console.log(state)
     },
     subFetch: (state, subArr) => {
       state.subscribers.unshift(subArr)
@@ -94,7 +92,6 @@ export default new Vuex.Store({
               total: data.total,
               followers: data.data
             }
-            console.log(dataBlob.followers)
             commit('followFetch', dataBlob)
         }
       )
@@ -113,7 +110,6 @@ export default new Vuex.Store({
       )
         .then(
           data => {
-            console.log(data.data)
             commit('subFetch', data.data)
         }
       )
@@ -132,8 +128,22 @@ export default new Vuex.Store({
       )
         .then(
           data => {
+            const streamDataArray = [];
+
+            for (const key in data.data) {
+              streamDataArray.push({
+                id: data.data[key].id, 
+                user_id: data.data[key].user_id, 
+                user_name: data.data[key].user_name, 
+                game_id: data.data[key].game_name, 
+                stream_title: data.data[key].title, 
+                viewer_count: data.data[key].viewer_count, 
+                thumbnail_url: data.data[key].thumbnail_url.replace('{width}', '320').replace('{height}', '180'), 
+                twitch_url: "https://twitch.tv/" + data.data[key].user_name
+              })
+            }
+            commit('streamFetch', streamDataArray)
             
-            commit('streamFetch', data.data)
         }
       )
 

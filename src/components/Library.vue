@@ -6,9 +6,15 @@
       :key="i"
     >
       <h4>{{ stream.user_name }}</h4>
-      <h5>Game: {{ stream.game_name }}</h5>
-      <h5>Viewers: {{ stream.viewer_count }}</h5>
-      <img :src="`${stream.thumbnail_url}`" alt="" />
+      <div class="stream-info">
+        <h5>{{ stream.stream_title }}</h5>
+        <h5 class="game-name">Game: {{ stream.game_id }}</h5>
+        <h5 class="view-count">Viewers: {{ stream.viewer_count }}</h5>
+      </div>
+
+      <a href="https://twitch.tv/" target="_blank">
+        <img :src="`${stream.thumbnail_url}`" alt="" />
+      </a>
     </div>
   </div>
 </template>
@@ -27,11 +33,33 @@ export default {
 .content-wrapper {
   display: flex;
   flex-direction: column;
+  margin: 2rem;
 }
 .content {
   display: inherit;
-  border: solid black;
+  border-radius: 2rem;
+  margin: 0.5rem;
   flex-direction: row;
   justify-content: space-between;
+  text-align: left;
+  background-color: #9146ff;
+}
+.stream-info {
+  width: 66%;
+}
+.game-name {
+  text-align: left;
+}
+.view-count {
+  text-align: left;
+}
+h4 {
+  margin: 2rem;
+
+  width: 30%;
+}
+img {
+  margin: 1rem;
+  border-radius: 2rem;
 }
 </style>

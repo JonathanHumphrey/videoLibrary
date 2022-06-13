@@ -1,13 +1,12 @@
 <template>
-  <div>
-    dook
-
+  <div class="wrapper">
     <a
+      class="link-account-anchor"
       id="linkAnchor"
       href="https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=pk0roinew9e83z6qn6ctr7xo7yas15&redirect_uri=http://localhost:8080&scope=user:read:follows%20channel:read:subscriptions%20user:read:follows"
       >Authorize a Link</a
     >
-    <button @click="validateToken()">Link Now!</button>
+    <button class="link-button" @click="validateToken()">Link Now!</button>
   </div>
 </template>
 
@@ -35,8 +34,6 @@ export default {
       setTimeout(() => {
         this.fetchInformation(this.User);
       }, 500);
-
-      console.log(this.Follows);
     },
   },
   computed: {
@@ -49,4 +46,26 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+  margin-bottom: 5rem;
+  width: 12rem;
+}
+.link-account-anchor {
+  text-decoration: none;
+  background-color: #6441a5;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  margin: 1rem;
+  color: #ffffff;
+}
+.link-button {
+  text-decoration: none;
+  background-color: #6441a5;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  margin: 1rem;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
 </style>
