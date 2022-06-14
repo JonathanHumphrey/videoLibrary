@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import moment from 'moment'
 import axios from "axios"
 
 
@@ -15,7 +16,8 @@ export default new Vuex.Store({
     },
     Follows: {
       total: 0,
-      followerArr: []
+      followerArr: [],
+      pagination: ''
     },
     subscribers: [],
     followedStreams: []
@@ -30,7 +32,10 @@ export default new Vuex.Store({
     },
     followFetch: (state, dataBlob) => {
       state.Follows.total = dataBlob.total
-      state.Follows.followerArr.unshift(dataBlob.followers)
+      state.Follows.followerArr.push(dataBlob.followers)
+      state.Follows.pagination = dataBlob.pagination
+
+      console.log(state.Follows)
     },
     subFetch: (state, subArr) => {
       state.subscribers.unshift(subArr)
@@ -73,6 +78,9 @@ export default new Vuex.Store({
       const followUrl = "https://api.twitch.tv/helix/users/follows?to_id=" + User.userId
       const subUrl = "https://api.twitch.tv/helix/subscriptions?broadcaster_id=" + User.userId
       const streamUrl = "https://api.twitch.tv/helix/streams/followed?user_id=" + User.userId
+      let nextPageUrl = followUrl + '&after='
+
+      
         
       //Fetches the users followers 
         const followRes =  fetch(followUrl, {
@@ -88,13 +96,80 @@ export default new Vuex.Store({
         )
         .then(
           data => {
+            const follows = []
+           
+            for (const key in data.data) {
+              const date = data.data[key].followed_at
+              
+              follows.push({
+                from_login: data.data[key].from_login,
+                from_id: data.data[key].from_id,
+                from_name: data.data[key].from_name,
+                to_id: data.data[key].to_id,
+                to_login: data.data[key].to_login,
+                to_name: data.data[key].to_name,
+                followed_at: moment(date).utc().format('MM-DD-YYYY'),
+              })
+            }
             const dataBlob = {
               total: data.total,
-              followers: data.data
+              followers: follows,
+              pagination: data.pagination.cursor
             }
+
+            console.log(dataBlob.pagination)
+            nextPageUrl = nextPageUrl.concat(dataBlob.pagination)
+            console.log(nextPageUrl)
+
             commit('followFetch', dataBlob)
+
+            for (let i = 0; i < this.state.Follows.total % 20; i++){
+              const nextPages = fetch(nextPageUrl, {
+                headers: new Headers({
+                  'Authorization': 'Bearer ' + User.token,
+                  'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
+                })
+              })
+              .then(
+                function (response) {
+              return response.json();
+              })
+                .then(
+                  data => {
+                    
+                    const nextPage = []
+                   for (const key in data.data) {
+                    const date = data.data[key].followed_at
+                    
+                    nextPage.push({
+                      from_login: data.data[key].from_login,
+                      from_id: data.data[key].from_id,
+                      from_name: data.data[key].from_name,
+                      to_id: data.data[key].to_id,
+                      to_login: data.data[key].to_login,
+                      to_name: data.data[key].to_name,
+                      followed_at: moment(date).utc().format('MM-DD-YYYY'),
+                    })
+                   }
+                    const nextPageBlob = {
+                      total: data.total,
+                      followers: nextPage,
+                      pagination: data.pagination.cursor
+                    }
+                    commit('followFetch', nextPageBlob)
+                  
+                    
+
+                    
+                }
+              )
+            }
+            
         }
-      )
+        )
+      
+      
+      
       
       // Fetches the users subsrcibers
       const subRes = fetch(subUrl, {

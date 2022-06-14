@@ -17,13 +17,21 @@
         </thead>
         <tbody>
           <tr
-            v-for="(follower, i) in this.Follows.followerArr[0]"
+            v-for="(follower, i) in this.Follows.followerArr[
+              this.currentPage - 1
+            ]"
             v-bind:key="i"
           >
             <td>{{ follower.from_login }}</td>
             <td>{{ follower.followed_at }}</td>
           </tr>
         </tbody>
+        <Pagination
+          :totalPages="7"
+          :perPage="20"
+          :currentPage="currentPage"
+          @pagechanged="onPageChange"
+        />
       </table>
       <table>
         <thead>
@@ -44,6 +52,8 @@
 </template>
 
 <script>
+import Pagination from "./Pagination.vue";
+
 import { mapState } from "vuex";
 
 export default {
@@ -56,16 +66,26 @@ export default {
   data() {
     return {
       isActive: true,
+      currentPage: 1,
     };
   },
   name: "Stats",
-  methods: {},
+  methods: {
+    onPageChange(page) {
+      console.log(this.Follows.followerArr[page]);
+      console.log(page);
+      this.currentPage = page;
+    },
+  },
   computed: {
     ...mapState({
       User: (state) => state.User,
       Follows: (state) => state.Follows,
       Subs: (state) => state.subscribers,
     }),
+  },
+  components: {
+    Pagination,
   },
 };
 </script>
