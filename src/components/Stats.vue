@@ -72,8 +72,6 @@ export default {
   name: "Stats",
   methods: {
     onPageChange(page) {
-      console.log(this.Follows.followerArr[page]);
-      console.log(page);
       this.currentPage = page;
     },
   },

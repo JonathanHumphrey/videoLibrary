@@ -7,7 +7,7 @@
           @click="onClickFirstPage"
           :disabled="isInFirstPage"
         >
-          First
+          &laquo;
         </button>
       </li>
       <li class="pagination-item">
@@ -16,7 +16,7 @@
           @click="onClickPreviousPage"
           :disabled="isInFirstPage"
         >
-          Previous
+          &lt;
         </button>
       </li>
       <!-- NUMBER BUTTON START -->
@@ -33,13 +33,13 @@
       <!-- NUMBER BUTTON END -->
       <li class="pagination-item">
         <button type="button" @click="onClickNextPage" :disabled="isInLastPage">
-          Next
+          &gt;
         </button>
       </li>
 
       <li class="pagination-item">
         <button type="button" @click="onClickLastPage" :disabled="isInLastPage">
-          Last
+          &raquo;
         </button>
       </li>
     </ul>
@@ -47,6 +47,15 @@
 </template>
 
 <script>
+/* 
+  Reusable Pagination UI component built following a tutorial
+
+  AUTHOR: Filipa Lacerda
+  LINK: https://www.digitalocean.com/community/tutorials/vuejs-vue-pagination-component
+
+  ACCESSED: 06-14-2022
+
+*/
 export default {
   computed: {
     startPage() {
@@ -127,16 +136,32 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+  text-align: center;
+}
 .pagination {
   list-style-type: none;
 }
 
 .pagination-item {
   display: inline-block;
+  border: none;
 }
 
 .active {
   background-color: #4aae9b;
   color: #ffffff;
+}
+button {
+  padding: 0.5rem;
+  border: none;
+  margin: 0.1rem;
+  font-size: 1rem;
+  border-radius: 0.2rem;
+  background-color: #6441a5;
+  color: azure;
+}
+button:hover {
+  background-color: #0e9dd9;
 }
 </style>

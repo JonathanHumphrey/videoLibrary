@@ -10,8 +10,6 @@ import Vue from "vue";
 
 import Initialize from "./components/Initialize.vue";
 import NavTabs from "./components/NavTabs.vue";
-import Tab from "./components/Tab.vue";
-//import Stats from "./components/Stats.vue";
 
 export default Vue.extend({
   methods: {},

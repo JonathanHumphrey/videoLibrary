@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="this.User.userId !== 0">
     <a
       class="nav-link"
       id="stats"
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import Stats from "./Stats.vue";
 import Library from "./Library.vue";
 
@@ -49,6 +51,11 @@ export default {
   components: {
     Stats,
     Library,
+  },
+  computed: {
+    ...mapState({
+      User: (state) => state.User,
+    }),
   },
 };
 </script>

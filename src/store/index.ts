@@ -17,7 +17,8 @@ export default new Vuex.Store({
     Follows: {
       total: 0,
       followerArr: [],
-      pagination: ''
+      pagination: '',
+      URL: ''
     },
     subscribers: [],
     followedStreams: []
@@ -35,7 +36,8 @@ export default new Vuex.Store({
       state.Follows.followerArr.push(dataBlob.followers)
       state.Follows.pagination = dataBlob.pagination
 
-      console.log(state.Follows)
+      state.Follows.URL = dataBlob.URL.concat(dataBlob.pagination)
+      console.log(state.Follows.pagination)
     },
     subFetch: (state, subArr) => {
       state.subscribers.unshift(subArr)
@@ -75,14 +77,18 @@ export default new Vuex.Store({
     async fetchInformation({commit}, User) {
       
       // Establishes a URL for each of the different API requests
-      const followUrl = "https://api.twitch.tv/helix/users/follows?to_id=" + User.userId
+      const followUrl = "https://api.twitch.tv/helix/users/follows?to_id=" + User.userId + '&after='
       const subUrl = "https://api.twitch.tv/helix/subscriptions?broadcaster_id=" + User.userId
       const streamUrl = "https://api.twitch.tv/helix/streams/followed?user_id=" + User.userId
-      let nextPageUrl = followUrl + '&after='
+      const nextPageUrl = followUrl + '&after='
 
       
         
       //Fetches the users followers 
+
+      //CURRENTLY: only fetches the first two, and after that, the pagination cursor doesn't update properly for subsequent requests
+
+      //TODO: make this able to go through and update itself so that the pagination curosr is being updated each time it makes the mutation to state. 
         const followRes =  fetch(followUrl, {
           headers: new Headers({
             'Authorization': 'Bearer ' + User.token,
@@ -114,17 +120,15 @@ export default new Vuex.Store({
             const dataBlob = {
               total: data.total,
               followers: follows,
-              pagination: data.pagination.cursor
+              pagination: data.pagination.cursor,
+              URL: followUrl
             }
-
             console.log(dataBlob.pagination)
-            nextPageUrl = nextPageUrl.concat(dataBlob.pagination)
-            console.log(nextPageUrl)
-
             commit('followFetch', dataBlob)
 
-            for (let i = 0; i < this.state.Follows.total % 20; i++){
-              const nextPages = fetch(nextPageUrl, {
+            
+              
+              fetch(this.state.Follows.URL, {
                 headers: new Headers({
                   'Authorization': 'Bearer ' + User.token,
                   'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
@@ -154,16 +158,17 @@ export default new Vuex.Store({
                     const nextPageBlob = {
                       total: data.total,
                       followers: nextPage,
-                      pagination: data.pagination.cursor
+                      pagination: data.pagination.cursor,
+                      URL:  followUrl
                     }
-                    commit('followFetch', nextPageBlob)
-                  
+                    console.log(nextPageBlob.pagination)
                     
 
-                    
+                    commit('followFetch', nextPageBlob)
                 }
               )
-            }
+            
+            //}
             
         }
         )
