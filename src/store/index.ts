@@ -37,13 +37,15 @@ export default new Vuex.Store({
       state.Follows.pagination = dataBlob.pagination
 
       state.Follows.URL = dataBlob.URL.concat(dataBlob.pagination)
-      console.log(state.Follows.pagination)
+      //console.log(state.Follows.pagination)
     },
     subFetch: (state, subArr) => {
       state.subscribers.unshift(subArr)
     },
     streamFetch: (state, streamArr) => {
       state.followedStreams.unshift(streamArr)
+
+      console.log(streamArr)
     }
   },
   actions: {

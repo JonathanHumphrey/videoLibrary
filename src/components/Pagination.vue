@@ -153,6 +153,7 @@ export default {
   color: #ffffff;
 }
 button {
+  cursor: pointer;
   padding: 0.5rem;
   border: none;
   margin: 0.1rem;
@@ -163,5 +164,6 @@ button {
 }
 button:hover {
   background-color: #0e9dd9;
+  flex-grow: 1rem;
 }
 </style>

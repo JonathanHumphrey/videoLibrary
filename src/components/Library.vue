@@ -1,5 +1,18 @@
 <template>
   <div class="content-wrapper">
+    <div>
+      <label for="filterBy"
+        >Filter By:
+        <select name="filterBy" id="filter" @change="filterList($event)">
+          <option value="none" selected disabled hidden>
+            Select an Option
+          </option>
+          <option value="game">Game</option>
+          <option value="hi-lo">View Count (Descending)</option>
+          <option value="lo-hi">View Count (Ascending)</option>
+        </select>
+      </label>
+    </div>
     <div
       class="content"
       v-for="(stream, i) in this.followedStreams[0]"
@@ -22,6 +35,17 @@
 import { mapState } from "vuex";
 
 export default {
+  data() {
+    return {
+      filterValue: "none",
+    };
+  },
+  methods: {
+    filterList(event) {
+      this.filterValue = event.target.value;
+      console.log(this.filterValue);
+    },
+  },
   computed: {
     ...mapState({
       followedStreams: (state) => state.followedStreams,
