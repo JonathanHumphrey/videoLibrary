@@ -21,7 +21,8 @@ export default new Vuex.Store({
       URL: ''
     },
     subscribers: [],
-    followedStreams: []
+    followedStreams: [], 
+    activeGames: []
     
   },
   mutations: {
@@ -42,10 +43,13 @@ export default new Vuex.Store({
     subFetch: (state, subArr) => {
       state.subscribers.unshift(subArr)
     },
-    streamFetch: (state, streamArr) => {
-      state.followedStreams.unshift(streamArr)
+    streamFetch: (state, streamData) => {
+      state.followedStreams.unshift(streamData.streamArr)
+      if (state.activeGames.length === 0) {
+        state.activeGames.unshift(streamData.activeGames)
+      }
 
-      console.log(streamArr)
+      console.log(state.activeGames)
     }
   },
   actions: {
@@ -211,6 +215,7 @@ export default new Vuex.Store({
         .then(
           data => {
             const streamDataArray = [];
+            const activeGames = [];
 
             for (const key in data.data) {
               streamDataArray.push({
@@ -223,8 +228,15 @@ export default new Vuex.Store({
                 thumbnail_url: data.data[key].thumbnail_url.replace('{width}', '320').replace('{height}', '180'), 
                 twitch_url: "https://twitch.tv/" + data.data[key].user_name
               })
+              if (!activeGames.includes(data.data[key].game_name)) {
+                activeGames.push(data.data[key].game_name)
+              }
             }
-            commit('streamFetch', streamDataArray)
+            const streamData = {
+              streamArr: streamDataArray,
+              activeGames: activeGames
+            }
+            commit('streamFetch', streamData)
             
         }
       )

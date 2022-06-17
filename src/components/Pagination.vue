@@ -25,7 +25,7 @@
           type="button"
           @click="onClickPage(page.name)"
           :disabled="page.isDisabled"
-          class="{ active: isPageActive(page.name) }"
+          :class="{ active: isPageActive(page.name) }"
         >
           {{ page.name }}
         </button>
@@ -65,7 +65,7 @@ export default {
       }
       // When on last page
       if (this.currentPage === this.totalPages) {
-        return this.totalPages - (this.maxVisibleButtons - 1);
+        return this.totalPages - this.maxVisibleButtons;
       }
 
       // When inbetween
@@ -149,7 +149,7 @@ export default {
 }
 
 .active {
-  background-color: #4aae9b;
+  background-color: #0e9dd9;
   color: #ffffff;
 }
 button {
@@ -164,6 +164,5 @@ button {
 }
 button:hover {
   background-color: #0e9dd9;
-  flex-grow: 1rem;
 }
 </style>

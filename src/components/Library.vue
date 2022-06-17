@@ -12,12 +12,18 @@
           <option value="lo-hi">View Count (Ascending)</option>
         </select>
       </label>
+      <select
+        name="gameFilter"
+        id="activeGames"
+        v-show="this.filterValue === 'game'"
+        @change="getFilteredGames($event)"
+      >
+        <option v-for="(game, i) in activeGames[0]" :value="game" :key="i">
+          {{ game }}
+        </option>
+      </select>
     </div>
-    <div
-      class="content"
-      v-for="(stream, i) in this.followedStreams[0]"
-      :key="i"
-    >
+    <div class="content" v-for="(stream, i) in this.filteredList" :key="i">
       <h4>{{ stream.user_name }}</h4>
       <div class="stream-info">
         <h5>{{ stream.stream_title }}</h5>
@@ -38,17 +44,29 @@ export default {
   data() {
     return {
       filterValue: "none",
+      gameFilter: "",
+      filteredList: this.followedStreams,
     };
   },
   methods: {
     filterList(event) {
       this.filterValue = event.target.value;
-      console.log(this.filterValue);
+      console.log(this.gameFilter);
+      //this.getFilteredGames();
+
+      console.log(event);
+    },
+    getFilteredGames: function (event) {
+      console.log(event);
+      return this.filteredList.filter(function (game) {
+        game.game_id === event.target.value;
+      });
     },
   },
   computed: {
     ...mapState({
       followedStreams: (state) => state.followedStreams,
+      activeGames: (state) => state.activeGames,
     }),
   },
 };
