@@ -36,9 +36,9 @@ export default new Vuex.Store({
       state.Follows.total = dataBlob.total
       state.Follows.followerArr.push(dataBlob.followers)
       state.Follows.pagination = dataBlob.pagination
-
+      
       state.Follows.URL = dataBlob.URL.concat(dataBlob.pagination)
-      //console.log(state.Follows.pagination)
+      
     },
     subFetch: (state, subArr) => {
       state.subscribers.unshift(subArr)
@@ -48,8 +48,6 @@ export default new Vuex.Store({
       if (state.activeGames.length === 0) {
         state.activeGames.unshift(streamData.activeGames)
       }
-
-      console.log(state.activeGames)
     }
   },
   actions: {
@@ -94,90 +92,88 @@ export default new Vuex.Store({
 
       //CURRENTLY: only fetches the first two, and after that, the pagination cursor doesn't update properly for subsequent requests
 
-      //TODO: make this able to go through and update itself so that the pagination curosr is being updated each time it makes the mutation to state. 
-        const followRes =  fetch(followUrl, {
-          headers: new Headers({
-            'Authorization': 'Bearer ' + User.token,
-            'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
+      //TODO: make this able to go through and update itself so that the pagination cursor is being updated each time it makes the mutation to state. 
+      for (let i = 0; i < 4; i++){
+        if (this.state.Follows.pagination === '' || this.state.Follows.URL === '') {
+          const followRes =  fetch(followUrl, {
+            headers: new Headers({
+              'Authorization': 'Bearer ' + User.token,
+              'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
+            })
           })
-        })
-        .then(
-          function (response) {
-            return response.json();
-          }
-        )
-        .then(
-          data => {
-            const follows = []
-           
-            for (const key in data.data) {
-              const date = data.data[key].followed_at
-              
-              follows.push({
-                from_login: data.data[key].from_login,
-                from_id: data.data[key].from_id,
-                from_name: data.data[key].from_name,
-                to_id: data.data[key].to_id,
-                to_login: data.data[key].to_login,
-                to_name: data.data[key].to_name,
-                followed_at: moment(date).utc().format('MM-DD-YYYY'),
-              })
-            }
-            const dataBlob = {
-              total: data.total,
-              followers: follows,
-              pagination: data.pagination.cursor,
-              URL: followUrl
-            }
-            console.log(dataBlob.pagination)
-            commit('followFetch', dataBlob)
-
-            
-              
-              fetch(this.state.Follows.URL, {
-                headers: new Headers({
-                  'Authorization': 'Bearer ' + User.token,
-                  'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
-                })
-              })
-              .then(
-                function (response) {
+          .then(
+            function (response) {
               return response.json();
-              })
-                .then(
-                  data => {
-                    
-                    const nextPage = []
-                   for (const key in data.data) {
-                    const date = data.data[key].followed_at
-                    
-                    nextPage.push({
-                      from_login: data.data[key].from_login,
-                      from_id: data.data[key].from_id,
-                      from_name: data.data[key].from_name,
-                      to_id: data.data[key].to_id,
-                      to_login: data.data[key].to_login,
-                      to_name: data.data[key].to_name,
-                      followed_at: moment(date).utc().format('MM-DD-YYYY'),
-                    })
-                   }
-                    const nextPageBlob = {
-                      total: data.total,
-                      followers: nextPage,
-                      pagination: data.pagination.cursor,
-                      URL:  followUrl
-                    }
-                    console.log(nextPageBlob.pagination)
-                    
-
-                    commit('followFetch', nextPageBlob)
+            }
+          )
+          .then(
+            data => {
+              const follows = []
+             
+              for (const key in data.data) {
+                const date = data.data[key].followed_at
+                
+                follows.push({
+                  from_login: data.data[key].from_login,
+                  from_id: data.data[key].from_id,
+                  from_name: data.data[key].from_name,
+                  to_id: data.data[key].to_id,
+                  to_login: data.data[key].to_login,
+                  to_name: data.data[key].to_name,
+                  followed_at: moment(date).utc().format('MM-DD-YYYY'),
+                })
+              }
+                const dataBlob = {
+                  total: data.total,
+                  followers: follows,
+                  pagination: data.pagination.cursor,
+                  URL: followUrl
                 }
-              )
-            
-            //}
-            
+                commit('followFetch', dataBlob) 
+            }
+          )
         }
-        )
+        else {
+          console.log('here')
+          const followRes =  fetch(this.state.Follows.URL, {
+            headers: new Headers({
+              'Authorization': 'Bearer ' + User.token,
+              'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
+            })
+          })
+          .then(
+            function (response) {
+              return response.json();
+            }
+          )
+          .then(
+            data => {
+              const follows = []
+             
+              for (const key in data.data) {
+                const date = data.data[key].followed_at
+                
+                follows.push({
+                  from_login: data.data[key].from_login,
+                  from_id: data.data[key].from_id,
+                  from_name: data.data[key].from_name,
+                  to_id: data.data[key].to_id,
+                  to_login: data.data[key].to_login,
+                  to_name: data.data[key].to_name,
+                  followed_at: moment(date).utc().format('MM-DD-YYYY'),
+                })
+              }
+              const dataBlob = {
+                  total: data.total,
+                  followers: follows,
+                  pagination: this.state.Follows.pagination,
+                  URL: this.state.Follows.URL
+                }
+                commit('followFetch', dataBlob) 
+            }
+          )
+        }
+      }
       
       
       

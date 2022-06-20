@@ -23,7 +23,11 @@
         </option>
       </select>
     </div>
-    <div class="content" v-for="(stream, i) in this.filteredList" :key="i">
+    <div
+      class="content"
+      v-for="(stream, i) in this.followedStreams[0]"
+      :key="i"
+    >
       <h4>{{ stream.user_name }}</h4>
       <div class="stream-info">
         <h5>{{ stream.stream_title }}</h5>
@@ -45,7 +49,7 @@ export default {
     return {
       filterValue: "none",
       gameFilter: "",
-      filteredList: this.followedStreams,
+      //filteredList: this.followedStreams,
     };
   },
   methods: {
