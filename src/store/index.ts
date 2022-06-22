@@ -33,12 +33,15 @@ export default new Vuex.Store({
       state.User.token = dataBlob.token
     },
     followFetch: (state, dataBlob) => {
+
+      
+      state.Follows.pagination = dataBlob.pagination
       state.Follows.total = dataBlob.total
       state.Follows.followerArr.push(dataBlob.followers)
-      state.Follows.pagination = dataBlob.pagination
       
-      state.Follows.URL = dataBlob.URL.concat(dataBlob.pagination)
       
+      state.Follows.URL = dataBlob.URL
+      console.log(state.Follows)
     },
     subFetch: (state, subArr) => {
       state.subscribers.unshift(subArr)
@@ -78,23 +81,20 @@ export default new Vuex.Store({
     },
 
     // Grabs and commits the various information needed from the API
-    async fetchInformation({commit}, User) {
-      
-      // Establishes a URL for each of the different API requests
+    async fetchFollowers({ commit }, User) {
       const followUrl = "https://api.twitch.tv/helix/users/follows?to_id=" + User.userId + '&after='
-      const subUrl = "https://api.twitch.tv/helix/subscriptions?broadcaster_id=" + User.userId
-      const streamUrl = "https://api.twitch.tv/helix/streams/followed?user_id=" + User.userId
       const nextPageUrl = followUrl + '&after='
 
       
         
       //Fetches the users followers 
 
-      //CURRENTLY: only fetches the first two, and after that, the pagination cursor doesn't update properly for subsequent requests
-
+      
       //TODO: make this able to go through and update itself so that the pagination cursor is being updated each time it makes the mutation to state. 
       for (let i = 0; i < 4; i++){
-        if (this.state.Follows.pagination === '' || this.state.Follows.URL === '') {
+          let dataBlob = {}
+
+       
           const followRes =  fetch(followUrl, {
             headers: new Headers({
               'Authorization': 'Bearer ' + User.token,
@@ -123,57 +123,39 @@ export default new Vuex.Store({
                   followed_at: moment(date).utc().format('MM-DD-YYYY'),
                 })
               }
-                const dataBlob = {
+              
+              if (this.state.Follows.pagination === '' && this.state.Follows.URL === '') {
+
+                
+                dataBlob = {
                   total: data.total,
                   followers: follows,
                   pagination: data.pagination.cursor,
                   URL: followUrl
                 }
-                commit('followFetch', dataBlob) 
-            }
-          )
-        }
-        else {
-          console.log('here')
-          const followRes =  fetch(this.state.Follows.URL, {
-            headers: new Headers({
-              'Authorization': 'Bearer ' + User.token,
-              'Client-ID': 'pk0roinew9e83z6qn6ctr7xo7yas15'
-            })
-          })
-          .then(
-            function (response) {
-              return response.json();
-            }
-          )
-          .then(
-            data => {
-              const follows = []
-             
-              for (const key in data.data) {
-                const date = data.data[key].followed_at
-                
-                follows.push({
-                  from_login: data.data[key].from_login,
-                  from_id: data.data[key].from_id,
-                  from_name: data.data[key].from_name,
-                  to_id: data.data[key].to_id,
-                  to_login: data.data[key].to_login,
-                  to_name: data.data[key].to_name,
-                  followed_at: moment(date).utc().format('MM-DD-YYYY'),
-                })
               }
-              const dataBlob = {
+              else {
+                console.log('here')
+                dataBlob = {
                   total: data.total,
                   followers: follows,
                   pagination: this.state.Follows.pagination,
-                  URL: this.state.Follows.URL
+                  URL: followUrl + data.pagination
                 }
+              }
+                
                 commit('followFetch', dataBlob) 
             }
           )
-        }
+        
       }
+    },
+    async fetchInformation({commit}, User) {
+      
+      // Establishes a URL for each of the different API requests
+      
+      const subUrl = "https://api.twitch.tv/helix/subscriptions?broadcaster_id=" + User.userId
+      const streamUrl = "https://api.twitch.tv/helix/streams/followed?user_id=" + User.userId
       
       
       

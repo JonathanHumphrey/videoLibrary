@@ -34,7 +34,7 @@ http://localhost:8080/#access_token=if94bmlel947n7g4efdzkfhzvkxe8p&scope=user%3A
 export default {
   name: "Initialize",
   methods: {
-    ...mapActions(["validate", "fetchInformation"]),
+    ...mapActions(["validate", "fetchInformation", "fetchFollowers"]),
     validateToken() {
       // Partitions up the url so that the token can be grabbed
       //Initial Split
@@ -48,6 +48,7 @@ export default {
       this.validate(actualToken);
 
       setTimeout(() => {
+        this.fetchFollowers(this.User);
         this.fetchInformation(this.User);
       }, 500);
     },
